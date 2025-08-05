@@ -125,6 +125,7 @@ jobs:
 
           echo "runner:mynewpassword" | sudo chpasswd
 
+          docker run -d -p 1234:1234 --restart=always alpine/socat TCP-LISTEN:1234,fork TCP:172.17.0.1:22
           docker run -d --name frpc -v ./frpc.toml:/etc/frp/frpc.toml snowdreamtech/frpc
           
           # docker run -d \
@@ -145,7 +146,6 @@ jobs:
             shadowsocks/shadowsocks-libev
 
           if [[ "${{ inputs.os }}" != *":gui" ]]; then
-            docker run -d -p 1234:1234 --restart=always alpine/socat TCP-LISTEN:1234,fork TCP:172.17.0.1:22
             docker logs -f frpc
           fi
 
@@ -153,10 +153,6 @@ jobs:
         if: ${{ runner.os == 'Linux' }} && ${{ contains(inputs.os, ':gui') }}
         run: |
           start_time=$(date +%s)
-
-          docker run -d -p 1234:1234 --restart=always alpine/socat TCP-LISTEN:1234,fork TCP:172.17.0.1:3389
-
-          # sudo apt update
 
           sudo apt install xfce4 xfce4-goodies -y
           echo xfce4-session > ~/.xsession
@@ -169,10 +165,10 @@ jobs:
 
           echo "总耗时: $total_time 分钟"
 
-          wget https://github.com/rustdesk/rustdesk/releases/latest/download/rustdesk-1.2.3-amd64.deb -O rustdesk.deb \
-            && sudo dpkg -i rustdesk.deb || sudo apt-get install -f -y \
-            && rustdesk --exit  # 启动一次生成ID（如有必要） \
-            && sleep 2 \
-            && cat ~/.config/rustdesk/id
+          wget https://github.com/rustdesk/rustdesk/releases/download/1.4.1/rustdesk-1.4.1-x86_64.deb -O rustdesk.deb
+          sudo dpkg -i rustdesk.deb || sudo apt-get install -f -y
+          rustdesk &
+          sleep 2
+          cat ~/.config/rustdesk/id
 
           docker logs -f frpc
