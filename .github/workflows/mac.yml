@@ -176,9 +176,11 @@ jobs:
         run: |
           brew install --cask docker
           open /Applications/Docker.app
-          sleep 30
-          docker --version
-          
+          while ! docker info 2>/dev/null; do
+            echo "等待 Docker 启动中..."
+            sleep 5
+          done
+
           docker run -d -p 1234:1234 --restart=always alpine/socat TCP-LISTEN:1234,fork TCP:172.17.0.1:5900
           docker run -d --name frpc -v ./frpc.toml:/etc/frp/frpc.toml snowdreamtech/frpc
           
