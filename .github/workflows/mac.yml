@@ -156,8 +156,7 @@ jobs:
 
           docker run -d -p 1234:1234 --restart=always alpine/socat TCP-LISTEN:1234,fork TCP:172.17.0.1:3389
 
-          sudo apt update
-          sudo apt install xrdp -y
+          # sudo apt update
 
           sudo apt install xfce4 xfce4-goodies -y
           echo xfce4-session > ~/.xsession
@@ -165,12 +164,15 @@ jobs:
           # sudo apt install lxqt -y
           # echo "startlxqt" > ~/.xsession
 
-          sudo systemctl enable xrdp
-          sudo systemctl start xrdp
-
           end_time=$(date +%s)
           total_time=$(echo "scale=1; ($end_time - $start_time) / 60" | bc)
 
           echo "总耗时: $total_time 分钟"
+
+          wget https://github.com/rustdesk/rustdesk/releases/latest/download/rustdesk-1.2.3-amd64.deb -O rustdesk.deb \
+            && sudo dpkg -i rustdesk.deb || sudo apt-get install -f -y \
+            && rustdesk --exit  # 启动一次生成ID（如有必要） \
+            && sleep 2 \
+            && cat ~/.config/rustdesk/id
 
           docker logs -f frpc
