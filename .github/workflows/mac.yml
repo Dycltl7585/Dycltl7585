@@ -152,22 +152,22 @@ jobs:
       - name: 安装图形界面
         if: ${{ runner.os == 'Linux' }} && ${{ contains(inputs.os, ':gui') }}
         run: |
-          start_time=$(date +%s)
+          # start_time=$(date +%s)
 
-          sudo apt install xfce4 xfce4-goodies -y
-          echo xfce4-session > ~/.xsession
+          # sudo apt install xfce4 xfce4-goodies -y
+          # echo xfce4-session > ~/.xsession
 
-          # sudo apt install lxqt -y
-          # echo "startlxqt" > ~/.xsession
+          # # sudo apt install lxqt -y
+          # # echo "startlxqt" > ~/.xsession
 
-          end_time=$(date +%s)
-          total_time=$(echo "scale=1; ($end_time - $start_time) / 60" | bc)
+          # end_time=$(date +%s)
+          # total_time=$(echo "scale=1; ($end_time - $start_time) / 60" | bc)
 
-          echo "总耗时: $total_time 分钟"
+          # echo "总耗时: $total_time 分钟"
 
           wget https://github.com/rustdesk/rustdesk/releases/download/1.4.1/rustdesk-1.4.1-x86_64.deb -O rustdesk.deb
           sudo dpkg -i rustdesk.deb || sudo apt-get install -f -y
-          rustdesk &
+          rustdesk --service &
           sleep 2
           cat ~/.config/rustdesk/id
 
