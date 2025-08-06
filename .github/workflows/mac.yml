@@ -125,7 +125,6 @@ jobs:
 
           echo "runner:mynewpassword" | sudo chpasswd
 
-          docker run -d -p 1234:1234 --restart=always alpine/socat TCP-LISTEN:1234,fork TCP:172.17.0.1:22
           docker run -d --name frpc -v ./frpc.toml:/etc/frp/frpc.toml snowdreamtech/frpc
           
           # docker run -d \
@@ -146,29 +145,32 @@ jobs:
             shadowsocks/shadowsocks-libev
 
           if [[ "${{ inputs.os }}" != *":gui" ]]; then
+            docker run -d -p 1234:1234 --restart=always alpine/socat TCP-LISTEN:1234,fork TCP:172.17.0.1:22
             docker logs -f frpc
           fi
 
       - name: 安装图形界面
         if: ${{ runner.os == 'Linux' }} && ${{ contains(inputs.os, ':gui') }}
         run: |
-          # start_time=$(date +%s)
+          start_time=$(date +%s)
 
-          # sudo apt install xfce4 xfce4-goodies -y
-          # echo xfce4-session > ~/.xsession
+          docker run -d -p 1234:1234 --restart=always alpine/socat TCP-LISTEN:1234,fork TCP:172.17.0.1:3389
 
-          # # sudo apt install lxqt -y
-          # # echo "startlxqt" > ~/.xsession
+          sudo apt update
+          sudo apt install xrdp -y
 
-          # end_time=$(date +%s)
-          # total_time=$(echo "scale=1; ($end_time - $start_time) / 60" | bc)
+          sudo apt install xfce4 xfce4-goodies -y
+          echo xfce4-session > ~/.xsession
 
-          # echo "总耗时: $total_time 分钟"
+          # sudo apt install lxqt -y
+          # echo "startlxqt" > ~/.xsession
 
-          wget https://github.com/rustdesk/rustdesk/releases/download/1.4.1/rustdesk-1.4.1-x86_64.deb -O rustdesk.deb
-          sudo dpkg -i rustdesk.deb || sudo apt-get install -f -y
-          rustdesk --service &
-          sleep 2
-          cat ~/.config/rustdesk/id
+          sudo systemctl enable xrdp
+          sudo systemctl start xrdp
+
+          end_time=$(date +%s)
+          total_time=$(echo "scale=1; ($end_time - $start_time) / 60" | bc)
+
+          echo "总耗时: $total_time 分钟"
 
           docker logs -f frpc
