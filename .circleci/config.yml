@@ -63,10 +63,9 @@ commands:
 
 jobs:
   build-win:
-    resource_class: 'windows.large'
     machine:
       image: 'windows-server-2022-gui:current'
-      shell: 'powershell.exe -ExecutionPolicy Bypass'
+    resource_class: windows.2xlarge # can be medium, large, xlarge, 2xlarge
     parameters:
       port:
         type: integer
@@ -159,5 +158,3 @@ workflows:
     jobs:
       - build-linux:
           port: 9000
-
-
