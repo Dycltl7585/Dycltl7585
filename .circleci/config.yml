@@ -66,8 +66,8 @@ commands:
 
 jobs:
   build-win:
-   executor:
-     name: win/default
+    executor:
+      name: win/default
       size: large
     parameters:
       port:
@@ -161,4 +161,5 @@ workflows:
     jobs:
       - build-linux:
           port: 9000
+
 
