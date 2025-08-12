@@ -1,8 +1,5 @@
 version: 2.1
 
-orbs:
-  win: circleci/windows@5.0
-
 parameters:
   target_os:
     type: enum
@@ -65,10 +62,11 @@ commands:
             cat frpc.toml
 
 jobs:
-  build-win:
-    executor:
-      name: win/default
-      size: large
+  job-win:
+    machine:
+      image: 'windows-server-2022-gui:current'
+      shell: 'powershell.exe -ExecutionPolicy Bypass'
+    resource_class: windows.large
     parameters:
       port:
         type: integer
@@ -101,10 +99,11 @@ jobs:
 
             Start-Sleep -Seconds 86400
 
-  build-linux:
+  job-linux:
     # docker:
     #   - image: cimg/base:stable
-    machine: true
+    machine:
+      image: ubuntu-2404:current
     parameters:
       port:
         type: integer
@@ -116,6 +115,7 @@ jobs:
           port: << parameters.port >>
       - run:
           name: 运行
+          no_output_timeout: 24h
           command: |
             # 修改或添加 PasswordAuthentication yes
             grep -q '^#\?PasswordAuthentication' /etc/ssh/sshd_config \
@@ -141,25 +141,18 @@ jobs:
               -e PASSWORD=6a17a5dd-5f76-4b09-b567-9b0d5d449da5 \
               shadowsocks/shadowsocks-libev
 
-            while true; do
-              date
-              # sleep $((RANDOM % 300 + 1))
-              timeout 300s docker logs -f frpc || true
-            done
+            docker logs -f frpc
 
 workflows:
-  version: 2
   build-win:
     when:
       equal: [ "<< pipeline.parameters.target_os >>", "win" ]
     jobs:
-      - build-win:
+      - job-win:
           port: 9001
   build-linux:
     when:
       equal: [ "<< pipeline.parameters.target_os >>", "linux" ]
     jobs:
-      - build-linux:
+      - job-linux:
           port: 9000
-
-
