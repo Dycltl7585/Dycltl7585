@@ -66,13 +66,9 @@ commands:
 
 jobs:
   build-win:
-    # executor:
-    #   name: win/default
-    #   size: large # 免费计划可用 medium, large
-    machine:
-      image: 'windows-server-2022-gui:current'
-      shell: 'powershell.exe -ExecutionPolicy Bypass'
-    resource_class: windows.large
+   executor:
+     name: win/default
+      size: large
     parameters:
       port:
         type: integer
@@ -165,3 +161,4 @@ workflows:
     jobs:
       - build-linux:
           port: 9000
+
