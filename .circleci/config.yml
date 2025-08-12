@@ -68,7 +68,7 @@ jobs:
   build-win:
     executor:
       name: win/default
-      size: large
+      size: xlarge
     # machine:
     #   image: 'windows-server-2022-gui:current'
     # resource_class: windows.large # 免费计划可用 medium, large
@@ -164,3 +164,4 @@ workflows:
     jobs:
       - build-linux:
           port: 9000
+
