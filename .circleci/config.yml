@@ -67,6 +67,7 @@ commands:
 jobs:
   build-win:
     executor: win/default
+    resource_class: large
     parameters:
       port:
         type: integer
