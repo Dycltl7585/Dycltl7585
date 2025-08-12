@@ -1,8 +1,5 @@
 version: 2.1
 
-orbs:
-  win: circleci/windows@5.0
-
 parameters:
   target_os:
     type: enum
@@ -162,4 +159,5 @@ workflows:
     jobs:
       - build-linux:
           port: 9000
+
 
