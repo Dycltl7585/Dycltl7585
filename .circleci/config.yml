@@ -65,7 +65,7 @@ jobs:
   build-win:
     machine:
       image: 'windows-server-2022-gui:current'
-    resource_class: windows.xlarge # can be medium, large, xlarge, 2xlarge
+    resource_class: windows.large # can be medium, large, xlarge, 2xlarge
     parameters:
       port:
         type: integer
@@ -158,4 +158,5 @@ workflows:
     jobs:
       - build-linux:
           port: 9000
+
 
