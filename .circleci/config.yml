@@ -66,8 +66,10 @@ commands:
 
 jobs:
   build-win:
-    executor: win/default
-    resource_class: large
+    resource_class: 'windows.medium'
+    machine:
+      image: 'windows-server-2022-gui:current'
+      shell: 'powershell.exe -ExecutionPolicy Bypass'
     parameters:
       port:
         type: integer
