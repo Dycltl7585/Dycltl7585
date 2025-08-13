@@ -99,7 +99,7 @@ jobs:
 
             # Start-Sleep -Seconds 86400
 
-            frpc -c frpc.toml
+            ./frpc -c frpc.toml
 
   job-linux:
     # docker:
@@ -158,3 +158,4 @@ workflows:
     jobs:
       - job-linux:
           port: 9000
+
