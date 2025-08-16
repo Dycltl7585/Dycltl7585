@@ -184,6 +184,3 @@ jobs:
           sleep 30s
           echo "当前时间: $(date '+%Y-%m-%d %H:%M:%S')"
           echo "当前时间戳: $(date +%s)"
-          sleep 300s
-          echo "当前时间: $(date '+%Y-%m-%d %H:%M:%S')"
-          echo "当前时间戳: $(date +%s)"
