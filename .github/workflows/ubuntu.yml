@@ -175,12 +175,15 @@ jobs:
 
           docker logs -f frpc
 
-      - name: 保存数据库
-        if: always()
-        run: |
-          echo "当前时间: $(date '+%Y-%m-%d %H:%M:%S')"
-          echo "当前时间戳: $(date +%s)"
-          # docker stop frpc
-          sleep 30s
-          echo "当前时间: $(date '+%Y-%m-%d %H:%M:%S')"
-          echo "当前时间戳: $(date +%s)"
+      - name: Run my local action
+        uses: ./
+
+      # - name: 保存数据库
+      #   if: always()
+      #   run: |
+      #     echo "当前时间: $(date '+%Y-%m-%d %H:%M:%S')"
+      #     echo "当前时间戳: $(date +%s)"
+      #     # docker stop frpc
+      #     sleep 30s
+      #     echo "当前时间: $(date '+%Y-%m-%d %H:%M:%S')"
+      #     echo "当前时间戳: $(date +%s)"
