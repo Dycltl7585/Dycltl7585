@@ -49,7 +49,7 @@ services:
     volumes:
       - ./my.cnf:/etc/mysql/conf.d/my.cnf:ro
       - ./sql:/docker-entrypoint-initdb.d:ro
-      # - my_volume:/var/lib/mysql
+      - my_volume:/var/lib/mysql
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
