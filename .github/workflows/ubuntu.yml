@@ -4,7 +4,7 @@ on:
       os:
         description: '系统'
         required: true
-        default: 'windows-latest'
+        default: 'ubuntu-latest'
         type: choice
         options:
           - windows-latest
@@ -14,7 +14,7 @@ on:
       port:
         description: '端口'
         required: true
-        default: '9001'
+        default: '9000'
         type: string
 
 concurrency:
@@ -29,7 +29,7 @@ env:
 jobs:
   job:
     runs-on: ${{ contains(inputs.os, ':gui') && 'ubuntu-latest' || inputs.os }}
-
+    timeout-minutes: 1
     steps:
       - uses: actions/checkout@v4
 
