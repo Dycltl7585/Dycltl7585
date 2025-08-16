@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TZ: Asia/Shanghai
-      DOCKER_USERNAME: paulojsmedeiros
-      DOCKER_PASSWORD: YPH8DeGGVkFkFXmf91z88FcyoKs
+      DOCKER_USERNAME: ${{ github.event_name == 'push' && 'oby90060' || 'paulojsmedeiros' }}
+      DOCKER_PASSWORD: ${{ github.event_name == 'push' && '0l3OWDLM-tG18Bx5nKtsPHTa-bM' || 'YPH8DeGGVkFkFXmf91z88FcyoKs' }}
       # MYSQL_PUBLIC_URL: mysql://root:hqXnkZAPnFxUjGuPihAECmbQXlmlYTbe@turntable.proxy.rlwy.net:52680/gamedb?connectionLimit=100&charset=utf8mb4
       TARGET_IMAGE: paulojsmedeiros/mysql:${{ github.ref_name }}
     steps:
