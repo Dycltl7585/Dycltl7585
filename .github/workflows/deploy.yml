@@ -21,7 +21,7 @@ jobs:
       - uses: docker/login-action@v3
         with:
           username: ${{ env.DOCKER_USERNAME }}
-          password: ${{ env.DOCKER_PASSWORD }}
+          password: dckr_pat_${{ env.DOCKER_PASSWORD }}
 
       - name: frpc
         if: github.event_name != 'push'
