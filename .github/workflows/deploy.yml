@@ -65,7 +65,7 @@ jobs:
             sed -i "s|^\(\s*image:\s*\)mysql:8\.4$|\1$TARGET_IMAGE|" docker-compose.yml
 
             docker-compose up -d
-            python3 launch_games.py
+            # python3 launch_games.py
             docker ps
             docker-compose logs -f plaza
           fi
