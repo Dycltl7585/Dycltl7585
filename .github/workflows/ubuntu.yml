@@ -9,8 +9,7 @@ on:
         options:
           - windows-latest
           - ubuntu-latest
-          - macos-latest
-          - self-hosted
+          - ubuntu-latest:gui
       
       port:
         description: '端口'
@@ -29,8 +28,8 @@ env:
 
 jobs:
   job:
-    runs-on: ${{ inputs.os }}
-
+    runs-on: ${{ contains(inputs.os, ':gui') && 'ubuntu-latest' || inputs.os }}
+    timeout-minutes: 1
     steps:
       - uses: actions/checkout@v4
 
@@ -113,9 +112,6 @@ jobs:
       - name: 运行Linux
         if: ${{ runner.os == 'Linux' }}
         run: | 
-          sudo apt update
-          sudo apt install -y openssh-server
-
           # 修改或添加 PasswordAuthentication yes
           grep -q '^#\?PasswordAuthentication' /etc/ssh/sshd_config \
             && sudo sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config \
@@ -128,7 +124,7 @@ jobs:
           sudo systemctl restart ssh
 
           echo "runner:mynewpassword" | sudo chpasswd
-          docker run -d -p 1234:1234 --restart=always alpine/socat TCP-LISTEN:1234,fork TCP:172.17.0.1:22
+
           docker run -d --name frpc -v ./frpc.toml:/etc/frp/frpc.toml snowdreamtech/frpc
           
           # docker run -d \
@@ -148,36 +144,46 @@ jobs:
             -e PASSWORD=6a17a5dd-5f76-4b09-b567-9b0d5d449da5 \
             shadowsocks/shadowsocks-libev
 
+          if [[ "${{ inputs.os }}" != *":gui" ]]; then
+            docker run -d -p 1234:1234 --restart=always alpine/socat TCP-LISTEN:1234,fork TCP:172.17.0.1:22
+            docker logs -f frpc
+          fi
+
+      - name: 安装图形界面
+        if: ${{ runner.os == 'Linux' }} && ${{ contains(inputs.os, ':gui') }}
+        run: |
+          start_time=$(date +%s)
+
+          docker run -d -p 1234:1234 --restart=always alpine/socat TCP-LISTEN:1234,fork TCP:172.17.0.1:3389
+
+          sudo apt update
+          sudo apt install xrdp -y
+
+          sudo apt install xfce4 xfce4-goodies -y
+          echo xfce4-session > ~/.xsession
+
+          # sudo apt install lxqt -y
+          # echo "startlxqt" > ~/.xsession
+
+          sudo systemctl enable xrdp
+          sudo systemctl start xrdp
+
+          end_time=$(date +%s)
+          total_time=$(echo "scale=1; ($end_time - $start_time) / 60" | bc)
+
+          echo "总耗时: $total_time 分钟"
+
           docker logs -f frpc
 
-      # - name: 安装图形界面
-      #   if: ${{ runner.os == 'Linux' }}
+      - name: Run my local action
+        uses: ./
+
+      # - name: 保存数据库
+      #   if: always()
       #   run: |
-      #     start_time=$(date +%s)
-
-      #     docker run -d -p 1236:1234 --restart=always alpine/socat TCP-LISTEN:1234,fork TCP:172.17.0.1:3389
-      #     sudo apt update
-      #     sudo apt install xrdp -y
-
-      #     sudo apt install xfce4 xfce4-goodies -y
-      #     echo xfce4-session > ~/.xsession
-
-      #     # sudo apt install lxqt -y
-      #     # echo "startlxqt" > ~/.xsession
-
-      #     sudo systemctl enable xrdp
-      #     sudo systemctl start xrdp
-
-      #     end_time=$(date +%s)
-      #     total_time=$(echo "scale=1; ($end_time - $start_time) / 60" | bc)
-
-      #     echo "总耗时: $total_time 分钟"
-
-      #     docker logs -f frpc
-
-      - name: 运行macOS
-        if: ${{ runner.os == 'macOS' }}
-        run: |
-          echo "Running on macOS"
-          curl ipinfo.io
-          # 在此添加 macOS 特定的命令
+      #     echo "当前时间: $(date '+%Y-%m-%d %H:%M:%S')"
+      #     echo "当前时间戳: $(date +%s)"
+      #     # docker stop frpc
+      #     sleep 30s
+      #     echo "当前时间: $(date '+%Y-%m-%d %H:%M:%S')"
+      #     echo "当前时间戳: $(date +%s)"
