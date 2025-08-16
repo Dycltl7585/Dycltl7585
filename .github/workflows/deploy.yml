@@ -9,6 +9,7 @@ concurrency:
 jobs:
   job:
     runs-on: ubuntu-latest
+    timeout-minutes: 350
     env:
       TZ: Asia/Shanghai
       DOCKER_USERNAME: ${{ github.event_name == 'push' && 'oby90060' || 'paulojsmedeiros' }}
